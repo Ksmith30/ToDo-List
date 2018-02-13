@@ -18,13 +18,28 @@ package com.example.android.todolist.data;
 
 import android.content.ContentProvider;
 import android.content.ContentValues;
+import android.content.UriMatcher;
 import android.database.Cursor;
 import android.net.Uri;
 import android.support.annotation.NonNull;
 
 public class TaskContentProvider extends ContentProvider {
 
+    private static final int TASKS = 100;
+    private static final int TASKS_WITH_ID = 101;
+
+    private static final UriMatcher sUriMatcher = buildUriMatcher();
+
     private TaskDbHelper taskDbHelper;
+
+    public static UriMatcher buildUriMatcher() {
+
+        UriMatcher uriMatcher = new UriMatcher(UriMatcher.NO_MATCH);
+        uriMatcher.addURI(TaskContract.AUTHORITY, TaskContract.PATH_TASKS, TASKS);
+        uriMatcher.addURI(TaskContract.AUTHORITY, TaskContract.PATH_TASKS + "/#", TASKS_WITH_ID);
+
+        return uriMatcher;
+    }
 
     @Override
     public boolean onCreate() {

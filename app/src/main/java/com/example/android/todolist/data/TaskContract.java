@@ -22,13 +22,13 @@ import android.provider.BaseColumns;
 
 public class TaskContract {
 
-    private static final String AUTHORITY = "com.example.android.todolist";
-    private static final Uri BASE_CONTENT_URI = Uri.parse("content://" + AUTHORITY);
-    private static final String PATH_TASKS = "tasks";
+    public static final String AUTHORITY = "com.example.android.todolist";
+    public static final Uri BASE_CONTENT_URI = Uri.parse("content://" + AUTHORITY);
+    public static final String PATH_TASKS = "tasks";
 
     public static final class TaskEntry implements BaseColumns {
 
-        private static final Uri CONTENT_URI =
+        public static final Uri CONTENT_URI =
                 BASE_CONTENT_URI.buildUpon().appendPath(PATH_TASKS).build();
         public static final String TABLE_NAME = "tasks";
         public static final String COLUMN_DESCRIPTION = "description";
