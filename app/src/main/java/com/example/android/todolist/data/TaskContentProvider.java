@@ -57,13 +57,13 @@ public class TaskContentProvider extends ContentProvider {
 
         int match = sUriMatcher.match(uri);
 
-        Uri returnUri = checkForMatch(db, uri, match, values);
+        Uri returnUri = insertHelper(db, uri, match, values);
         getContext().getContentResolver().notifyChange(uri, null);
 
        return returnUri;
     }
 
-    private Uri checkForMatch(SQLiteDatabase db, Uri uri, int match, ContentValues values) {
+    private Uri insertHelper(SQLiteDatabase db, Uri uri, int match, ContentValues values) {
         Uri returnUri;
 
         switch (match) {
@@ -91,7 +91,22 @@ public class TaskContentProvider extends ContentProvider {
     public Cursor query(@NonNull Uri uri, String[] projection, String selection,
                         String[] selectionArgs, String sortOrder) {
 
-        throw new UnsupportedOperationException("Not yet implemented");
+        SQLiteDatabase db = taskDbHelper.getReadableDatabase();
+
+        int match = sUriMatcher.match(uri);
+        Cursor cursor;
+        switch (match) {
+            case TASKS:
+               cursor = db.query(TaskContract.TaskEntry.TABLE_NAME, projection, selection,
+                       selectionArgs, null, null, sortOrder);
+
+               break;
+
+            default:
+                throw new UnsupportedOperationException("Unknown uri: " + uri);
+        }
+        cursor.setNotificationUri(getContext().getContentResolver(), uri);
+        return cursor;
     }
 
 
