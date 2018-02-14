@@ -17,9 +17,12 @@
 package com.example.android.todolist.data;
 
 import android.content.ContentProvider;
+import android.content.ContentResolver;
+import android.content.ContentUris;
 import android.content.ContentValues;
 import android.content.UriMatcher;
 import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
 import android.support.annotation.NonNull;
 
@@ -50,10 +53,39 @@ public class TaskContentProvider extends ContentProvider {
 
     @Override
     public Uri insert(@NonNull Uri uri, ContentValues values) {
+        SQLiteDatabase db = taskDbHelper.getWritableDatabase();
 
-        throw new UnsupportedOperationException("Not yet implemented");
+        int match = sUriMatcher.match(uri);
+
+        Uri returnUri = checkForMatch(db, uri, match, values);
+        getContext().getContentResolver().notifyChange(uri, null);
+
+       return returnUri;
     }
 
+    private Uri checkForMatch(SQLiteDatabase db, Uri uri, int match, ContentValues values) {
+        Uri returnUri;
+
+        switch (match) {
+            case TASKS:
+                long rowID = db.insert(TaskContract.TaskEntry.TABLE_NAME, null, values);
+
+                if (checkValidID(rowID)) {
+                    returnUri = ContentUris.withAppendedId(TaskContract.TaskEntry.CONTENT_URI, rowID);
+                } else {
+                    throw new android.database.SQLException("Failed to insert row into " + uri);
+                }
+                break;
+
+            default:
+                throw new UnsupportedOperationException("Unknown uri: " + uri);
+        }
+        return returnUri;
+    }
+
+    private boolean checkValidID(long rowID) {
+        return rowID > 0;
+    }
 
     @Override
     public Cursor query(@NonNull Uri uri, String[] projection, String selection,
