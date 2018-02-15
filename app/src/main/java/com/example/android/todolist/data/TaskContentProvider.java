@@ -53,7 +53,7 @@ public class TaskContentProvider extends ContentProvider {
 
     @Override
     public Uri insert(@NonNull Uri uri, ContentValues values) {
-        SQLiteDatabase db = taskDbHelper.getWritableDatabase();
+        final SQLiteDatabase db = taskDbHelper.getWritableDatabase();
 
         int match = sUriMatcher.match(uri);
 
@@ -90,18 +90,15 @@ public class TaskContentProvider extends ContentProvider {
     @Override
     public Cursor query(@NonNull Uri uri, String[] projection, String selection,
                         String[] selectionArgs, String sortOrder) {
-
-        SQLiteDatabase db = taskDbHelper.getReadableDatabase();
+        final SQLiteDatabase db = taskDbHelper.getReadableDatabase();
 
         int match = sUriMatcher.match(uri);
         Cursor cursor;
         switch (match) {
             case TASKS:
-               cursor = db.query(TaskContract.TaskEntry.TABLE_NAME, projection, selection,
+                cursor = db.query(TaskContract.TaskEntry.TABLE_NAME, projection, selection,
                        selectionArgs, null, null, sortOrder);
-
-               break;
-
+                break;
             default:
                 throw new UnsupportedOperationException("Unknown uri: " + uri);
         }
@@ -112,8 +109,26 @@ public class TaskContentProvider extends ContentProvider {
 
     @Override
     public int delete(@NonNull Uri uri, String selection, String[] selectionArgs) {
+        final SQLiteDatabase db = taskDbHelper.getWritableDatabase();
 
-        throw new UnsupportedOperationException("Not yet implemented");
+        int match = sUriMatcher.match(uri);
+        int numberOfDeletions;
+
+        switch (match) {
+            case TASKS_WITH_ID:
+                String id = uri.getPathSegments().get(1);
+                numberOfDeletions = db.delete(TaskContract.TaskEntry.TABLE_NAME, "_id=?",
+                        new String[]{id});
+                break;
+            default:
+                throw new UnsupportedOperationException("Unknown uri: " + uri);
+        }
+
+        if (numberOfDeletions != 0) {
+            getContext().getContentResolver().notifyChange(uri, null);
+        }
+
+        return numberOfDeletions;
     }
 
 

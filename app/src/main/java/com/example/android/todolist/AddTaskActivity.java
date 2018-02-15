@@ -30,7 +30,6 @@ import com.example.android.todolist.data.TaskContract;
 
 public class AddTaskActivity extends AppCompatActivity {
 
-    // Declare a member variable to keep track of a task's selected mPriority
     private int mPriority;
 
 
@@ -38,7 +37,6 @@ public class AddTaskActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_task);
 
-        // Initialize to highest mPriority by default (mPriority = 1)
         ((RadioButton) findViewById(R.id.radButton1)).setChecked(true);
         mPriority = 1;
     }

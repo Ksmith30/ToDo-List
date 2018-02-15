@@ -51,7 +51,6 @@ public class MainActivity extends AppCompatActivity implements
         setContentView(R.layout.activity_main);
 
         mRecyclerView = (RecyclerView) findViewById(R.id.recyclerViewTasks);
-
         mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
 
         mAdapter = new CustomCursorAdapter(this);
